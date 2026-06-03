@@ -1,0 +1,14 @@
+{
+  "name": "UYA HOME CRM",
+  "short_name": "UYA HOME",
+  "description": "CRM система для мебельного бизнеса",
+  "start_url": "/uya-home-crm/",
+  "display": "standalone",
+  "background_color": "#0e1016",
+  "theme_color": "#0e1016",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "/uya-home-crm/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/uya-home-crm/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
