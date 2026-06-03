@@ -6,8 +6,8 @@ import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <BrowserRouter basename="/uya-home-crm">
+    <BrowserRouter basename="/uya-home-crmm">
       <App />
     </BrowserRouter>
-  </React.StrictMode>
+  </React.StrictMode>,
 )
