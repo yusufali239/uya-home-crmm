@@ -7,8 +7,71 @@ export default function Dashboard({ orders, clients, expenses }) {
   const profit = revenue - orderCosts - expTotal
   const collected = orders.reduce((s, o) => s + (+o.prepaid || 0), 0)
   const pending = revenue - collected
-  const statusCount = STATUSES.reduce((a, s) => { a[s] = orders.filter(o => o.status === s).length; return a }, {})
+
+  const statusCount = STATUSES.reduce((a, s) => {
+    a[s] = orders.filter(o => o.status === s).length
+    return a
+  }, {})
+
   const recent = [...orders].slice(0, 6)
-  const stats = [{ label: 'Выручка', val: fmt(revenue), color: '#c9a96e' },{ label: 'Чистая прибыль', val: fmt(profit), color: profit >= 0 ? '#10b981' : '#ef4444' },{ label: 'Получено', val: fmt(collected), color: '#3b82f6' },{ label: 'Ожидается', val: fmt(pending), color: '#f59e0b' }]
-  return(<div><div style={{display:'flex',alignItems:'center',gap:10,marginBottom:22}}><div style={{width:36,height:36,background:'linear-gradient(135deg,#c9a96e,#e8c98a)',borderRadius:10,display:'flex',alignItems:'center''justifyContent:'center',fontSize:18,fontWeight:900,color:'#0e1016'}}>U</div><div><div style={{fontSize:18,fontWeight:800,color:'#fff'}}>UYA HOME</div><div style={{fontSize:11,color:'#555'}}>{orders.filter(o => o.status !== 'Завершён').length} активных заказов</div></div></div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:16}}>{stats.map(s =>(<Card key={s.label} accent={s.color}><div style={{fontSize:11,color:'#666',marginBottom:5}}>{s.label}</div><div style={{fontSize:19,fontWeight:800,color:s.color}}>{s.val}</div></Card>))}</div><Card style={{marginBottom:14}}><div style={{fontSize:11,color:'#555',marginBottom:12,fontWeight:700,letterSpacing:'0.05em'}}>ВОРОНКА ЗАКАЗОВ</div><div style={{display:'flex',gap:6}}>{STATUSES.map(s =>(<div key={s} style={{flex:1,background:STATUS_COLOR[s]+'12',border:`1px solid ${STATUS_COLOR[s]}30`,borderRadius:10,padding:'8px 4px',textAlign:'center'}}><div style={{fontSize:20,fontWeight:800,color:STATUS_COLOR[s]}}>{statusCount[s] || 0}</div><div style={{fontSize:9,color:'#555',marginTop:2,lineHeight:1.2}}>{s}</div></div>))}</div></Card><Card><div style={{fontSize:11,color:'#555', marginBottom:12,fontWeight:700}}>ПОСЛЕДНИЕ ЗАКАЗЫ</div>{recent.map((o,i) => {const cl=clients.find(c => c.id===o.client_id);return(<div key={o.id} style={{display:'flex''justifyContent:'space-between',alignItems:'center',padding:'9px 0',borderBottom:i<recent.length-1?'1px solid #1a1c22':'none',gap:8}}><div style={{minWidth:0}}><div style={{fontSize:13,color:'#fff',fontWeight:600}}>{io.product}</div><div style={{fontSize:11,color:'#555'}}>{cl?.name||'—'} · {o.order_date}</div></div><div style={{display:'flex',alignItems:'center',gap:8,flexShrink:0}}><span style={{fontSize:13,color:'#c9a96e',fontWeight:700}}>{fmt(o.price)}</span><Badge status={o.status} /></div></div>)})}</Card></div>)
+
+  const stats = [
+    { label: 'Выручка', val: fmt(revenue), color: '#c9a96e' },
+    { label: 'Чистая прибыль', val: fmt(profit), color: profit >= 0 ? '#10b981' : '#ef4444' },
+    { label: 'Получено', val: fmt(collected), color: '#3b82f6' },
+    { label: 'Ожидается', val: fmt(pending), color: '#f59e0b' },
+  ]
+
+  return (
+    <div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 22 }}>
+        <div style={{ width: 36, height: 36, background: 'linear-gradient(135deg,#c9a96e,#e8c98a)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, fontWeight: 900, color: '#0e1016' }}>U</div>
+        <div>
+          <div style={{ fontSize: 18, fontWeight: 800, color: '#fff' }}>UYA HOME</div>
+          <div style={{ fontSize: 11, color: '#555' }}>{orders.filter(o => o.status !== 'Завершён').length} активных заказов</div>
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 16 }}>
+        {stats.map(s => (
+          <Card key={s.label} accent={s.color}>
+            <div style={{ fontSize: 11, color: '#666', marginBottom: 5 }}>{s.label}</div>
+            <div style={{ fontSize: 19, fontWeight: 800, color: s.color }}>{s.val}</div>
+          </Card>
+        ))}
+      </div>
+
+      <Card style={{ marginBottom: 14 }}>
+        <div style={{ fontSize: 11, color: '#555', marginBottom: 12, fontWeight: 700, letterSpacing: '0.05em' }}>ВОРОНКА ЗАКАЗОВ</div>
+        <div style={{ display: 'flex', gap: 6 }}>
+          {STATUSES.map(s => (
+            <div key={s} style={{ flex: 1, background: STATUS_COLOR[s] + '12', border: `1px solid ${STATUS_COLOR[s]}30`, borderRadius: 10, padding: '8px 4px', textAlign: 'center' }}>
+              <div style={{ fontSize: 20, fontWeight: 800, color: STATUS_COLOR[s] }}>{statusCount[s] || 0}</div>
+              <div style={{ fontSize: 9, color: '#555', marginTop: 2, lineHeight: 1.2 }}>{s}</div>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      <Card>
+        <div style={{ fontSize: 11, color: '#555', marginBottom: 12, fontWeight: 700, letterSpacing: '0.05em' }}>ПОСЛЕДНИЕ ЗАКАЗЫ</div>
+        {recent.length === 0 && <div style={{ color: '#444', fontSize: 13, textAlign: 'center', padding: 20 }}>Заказов пока нет</div>}
+        {recent.map((o, i) => {
+          const cl = clients.find(c => c.id === o.client_id)
+          return (
+            <div key={o.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '9px 0', borderBottom: i < recent.length - 1 ? '1px solid #1a1c22' : 'none', gap: 8 }}>
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontSize: 13, color: '#fff', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{o.product}</div>
+                <div style={{ fontSize: 11, color: '#555' }}>{cl?.name || '—'} · {o.order_date}</div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                <span style={{ fontSize: 13, color: '#c9a96e', fontWeight: 700 }}>{fmt(o.price)}</span>
+                <Badge status={o.status} />
+              </div>
+            </div>
+          )
+        })}
+      </Card>
+    </div>
+  )
 }
